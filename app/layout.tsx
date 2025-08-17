@@ -26,8 +26,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {" "}
-      {/* Added suppressHydrationWarning for theme */}
       <head>
         <style>{`
 html {
