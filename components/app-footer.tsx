@@ -1,6 +1,6 @@
 export function AppFooter() {
   return (
-    <footer className="border-t bg-card/30 dark:bg-gray-800/30 mt-16">
+    <footer className="border-t bg-card/30 mt-16">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-sm text-muted-foreground">
           <p>

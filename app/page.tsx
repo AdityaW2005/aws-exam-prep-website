@@ -1,60 +1,63 @@
 import { Suspense } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BookOpen, Brain, Clock } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
 import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
 import { ModulesList } from "@/components/modules-list"
+import Link from "next/link"
+import { ModulesPrefetch } from "@/components/modules-prefetch"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
+  <ModulesPrefetch />
       <AppHeader />
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Introduction */}
-          <div className="text-center mb-12">
-            <h2 className="text-2xl font-semibold mb-4">Choose Your Learning Path</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Test your knowledge with comprehensive quizzes featuring multiple choice questions, or review key concepts
-              with interactive flashcards. All content is dynamically sourced from curated AWS learning materials.
+      
+      {/* Hero Section (simple + student vibe) */}
+      <section className="relative">
+        <div className="container mx-auto px-4 py-16 lg:py-24">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              AWS practice made simple
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
+              A small student-made project for students to prep with quizzes and flashcards. No fluff—just study.
             </p>
-          </div>
-
-          {/* Features Overview */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <Brain className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">Interactive Quizzes</h3>
-              <p className="text-sm text-muted-foreground">
-                Single and multi-select questions with detailed explanations and instant scoring
-              </p>
-            </div>
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <Clock className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">Smart Flashcards</h3>
-              <p className="text-sm text-muted-foreground">
-                Quick review cards with keyboard navigation and progress tracking
-              </p>
-            </div>
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <BookOpen className="h-8 w-8 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">Comprehensive Analytics</h3>
-              <p className="text-sm text-muted-foreground">
-                Detailed results with time tracking and performance insights
-              </p>
+            <div className="flex items-center justify-center gap-3">
+              <Link href="#modules">
+                <Button size="lg" className="rounded-full">
+                  Explore modules <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="#modules" className="hidden sm:inline-block">
+                <Button variant="outline" size="lg" className="rounded-full">
+                  View modules
+                </Button>
+              </Link>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Module Discovery */}
-          <div>
-            <h3 className="text-xl font-semibold mb-6">Available AWS Modules</h3>
+  {/* Removed heavy marketing features for a cleaner page */}
+
+      {/* Modules Section */}
+  <section id="modules" className="py-12 lg:py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+      <h2 className="text-2xl md:text-3xl font-bold mb-3">Pick a module</h2>
+      <p className="text-base text-muted-foreground max-w-2xl mx-auto">Compute, storage, networking, more.</p>
+            </div>
+            
             <Suspense fallback={<ModulesSkeleton />}>
               <ModulesList />
             </Suspense>
           </div>
         </div>
-      </main>
+      </section>
+
       <AppFooter />
     </div>
   )

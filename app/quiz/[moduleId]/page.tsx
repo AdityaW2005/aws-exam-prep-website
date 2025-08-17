@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,10 +15,11 @@ import { scoreQuiz } from "@/lib/scoring"
 import type { Question, QuizState, OptionKey } from "@/types/quiz"
 
 interface QuizPageProps {
-  params: { moduleId: string }
+  params: Promise<{ moduleId: string }>
 }
 
 export default function QuizPage({ params }: QuizPageProps) {
+  const { moduleId } = React.use(params)
   const router = useRouter()
   const [quizState, setQuizState] = useState<QuizState | null>(null)
   const [loading, setLoading] = useState(true)
@@ -28,8 +30,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     async function loadQuiz() {
       try {
         setLoading(true)
-        const response = await getQuizQuestions(params.moduleId)
-        const questions = Array.isArray(response) ? response : response?.questions
+  const questions = await getQuizQuestions(moduleId)
 
         if (!questions || !Array.isArray(questions) || questions.length === 0) {
           throw new Error("No questions found for this module")
@@ -57,7 +58,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
 
     loadQuiz()
-  }, [params.moduleId])
+  }, [moduleId])
 
   // Timer effect
   useEffect(() => {
@@ -183,7 +184,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     sessionStorage.setItem("quizQuestions", JSON.stringify(quizState.questions))
     sessionStorage.setItem("quizResponses", JSON.stringify(quizState.responses))
 
-    router.push(`/quiz/${params.moduleId}/results`)
+  router.push(`/quiz/${moduleId}/results`)
   }
 
   if (loading) {
@@ -191,17 +192,17 @@ export default function QuizPage({ params }: QuizPageProps) {
   }
 
   if (error) {
-    return <QuizError error={error} moduleId={params.moduleId} />
+  return <QuizError error={error} moduleId={moduleId} />
   }
 
   if (!quizState || !quizState.questions || quizState.questions.length === 0) {
-    return <QuizError error="Quiz data not available" moduleId={params.moduleId} />
+  return <QuizError error="Quiz data not available" moduleId={moduleId} />
   }
 
   const currentQuestion = quizState.questions[quizState.currentQuestionIndex]
 
   if (!currentQuestion) {
-    return <QuizError error="Current question not found" moduleId={params.moduleId} />
+  return <QuizError error="Current question not found" moduleId={moduleId} />
   }
 
   const progress = ((quizState.currentQuestionIndex + 1) / quizState.questions.length) * 100
@@ -209,9 +210,9 @@ export default function QuizPage({ params }: QuizPageProps) {
   const currentResponses = quizState.responses[currentQuestion.index] || []
 
   return (
-    <div className="min-h-screen bg-background dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 dark:bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -223,7 +224,7 @@ export default function QuizPage({ params }: QuizPageProps) {
               </Link>
               <div className="h-6 w-px bg-border" />
               <div>
-                <h1 className="font-semibold">Module {params.moduleId.toUpperCase()} Quiz</h1>
+                <h1 className="font-semibold">Module {moduleId.toUpperCase()} Quiz</h1>
                 <p className="text-sm text-muted-foreground">
                   Question {quizState.currentQuestionIndex + 1} of {quizState.questions.length}
                 </p>

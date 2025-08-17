@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,7 +28,7 @@ import { getFlashcards } from "@/lib/api"
 import type { Flashcard } from "@/types/quiz"
 
 interface FlashcardsPageProps {
-  params: { moduleId: string }
+  params: Promise<{ moduleId: string }>
 }
 
 interface FlashcardState {
@@ -41,6 +42,7 @@ interface FlashcardState {
 }
 
 export default function FlashcardsPage({ params }: FlashcardsPageProps) {
+  const { moduleId } = React.use(params)
   const router = useRouter()
   const [state, setState] = useState<FlashcardState | null>(null)
   const [loading, setLoading] = useState(true)
@@ -50,8 +52,8 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     async function loadFlashcards() {
       try {
         setLoading(true)
-        const response = await getFlashcards(params.moduleId)
-        const flashcards = Array.isArray(response) ? response : response?.flashcards
+  const response = await getFlashcards(moduleId)
+  const flashcards = response
 
         if (!flashcards || !Array.isArray(flashcards)) {
           throw new Error("Invalid flashcards data received")
@@ -84,7 +86,7 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     }
 
     loadFlashcards()
-  }, [params.moduleId])
+  }, [moduleId])
 
   // Keyboard navigation
   useEffect(() => {
@@ -240,11 +242,11 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
   }
 
   if (error) {
-    return <FlashcardsError error={error} moduleId={params.moduleId} />
+  return <FlashcardsError error={error} moduleId={moduleId} />
   }
 
   if (!state || state.flashcards.length === 0) {
-    return <FlashcardsError error="No flashcards available for this module" moduleId={params.moduleId} />
+  return <FlashcardsError error="No flashcards available for this module" moduleId={moduleId} />
   }
 
   const currentCard = state.flashcards[state.currentIndex]
@@ -256,9 +258,9 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
       : "neutral"
 
   return (
-    <div className="min-h-screen bg-background dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 dark:bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -270,7 +272,7 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
               </Link>
               <div className="h-6 w-px bg-border" />
               <div>
-                <h1 className="font-semibold">Module {params.moduleId.toUpperCase()} Flashcards</h1>
+                <h1 className="font-semibold">Module {moduleId.toUpperCase()} Flashcards</h1>
                 <p className="text-sm text-muted-foreground">
                   Card {state.currentIndex + 1} of {state.flashcards.length}
                 </p>

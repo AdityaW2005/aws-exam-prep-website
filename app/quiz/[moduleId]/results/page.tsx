@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,10 +26,11 @@ import Link from "next/link"
 import type { QuizResultSummary, Question, OptionKey } from "@/types/quiz"
 
 interface ResultsPageProps {
-  params: { moduleId: string }
+  params: Promise<{ moduleId: string }>
 }
 
 export default function ResultsPage({ params }: ResultsPageProps) {
+  const { moduleId } = React.use(params)
   const router = useRouter()
   const [results, setResults] = useState<QuizResultSummary | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
@@ -43,7 +45,7 @@ export default function ResultsPage({ params }: ResultsPageProps) {
 
     if (!resultsData || !questionsData || !responsesData) {
       // Redirect to quiz if no results found
-      router.push(`/quiz/${params.moduleId}`)
+  router.push(`/quiz/${moduleId}`)
       return
     }
 
@@ -53,27 +55,27 @@ export default function ResultsPage({ params }: ResultsPageProps) {
       setResponses(JSON.parse(responsesData))
     } catch (error) {
       console.error("Failed to parse quiz results:", error)
-      router.push(`/quiz/${params.moduleId}`)
+      router.push(`/quiz/${moduleId}`)
       return
     }
 
     setLoading(false)
-  }, [params.moduleId, router])
+  }, [moduleId, router])
 
   const retakeQuiz = () => {
     // Clear stored results
     sessionStorage.removeItem("quizResults")
     sessionStorage.removeItem("quizQuestions")
     sessionStorage.removeItem("quizResponses")
-    router.push(`/quiz/${params.moduleId}`)
+  router.push(`/quiz/${moduleId}`)
   }
 
   const createGitHubIssueUrl = (questionIndex: number, questionText: string) => {
     const baseUrl = "https://github.com/AdityaW2005/aws-modules-qb/issues/new"
-    const title = encodeURIComponent(`Issue with Question ${questionIndex} in Module ${params.moduleId.toUpperCase()}`)
+  const title = encodeURIComponent(`Issue with Question ${questionIndex} in Module ${moduleId.toUpperCase()}`)
     const body = encodeURIComponent(`**Question:** ${questionText}
 
-**Module:** ${params.moduleId.toUpperCase()}
+**Module:** ${moduleId.toUpperCase()}
 **Question Number:** ${questionIndex}
 
 **Issue Description:**
@@ -93,7 +95,7 @@ Add any other context about the problem here.`)
   }
 
   if (!results) {
-    return <ResultsError moduleId={params.moduleId} />
+    return <ResultsError moduleId={moduleId} />
   }
 
   const getScoreColor = (percentage: number) => {
@@ -114,14 +116,14 @@ Add any other context about the problem here.`)
   const ScoreIcon = scoreBadge.icon
 
   return (
-    <div className="min-h-screen bg-background dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 dark:bg-gray-800/50 backdrop-blur-sm">
+      <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">Quiz Results</h1>
-              <p className="text-muted-foreground mt-1">Module {params.moduleId.toUpperCase()} Performance Summary</p>
+              <p className="text-muted-foreground mt-1">Module {moduleId.toUpperCase()} Performance Summary</p>
             </div>
             <div className="flex items-center gap-3">
               <Link href="/">
@@ -240,7 +242,7 @@ Add any other context about the problem here.`)
                 questions={questions}
                 results={results}
                 responses={responses}
-                moduleId={params.moduleId}
+                moduleId={moduleId}
                 createGitHubIssueUrl={createGitHubIssueUrl}
               />
             </CardContent>

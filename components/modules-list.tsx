@@ -6,6 +6,7 @@ import { BookOpen, Brain, Clock, AlertCircle, Github } from "lucide-react"
 import Link from "next/link"
 import { getModules } from "@/lib/api"
 import { RefreshButton, ErrorRefreshButton } from "@/components/refresh-buttons"
+import * as React from "react"
 
 export async function ModulesList() {
   try {
@@ -24,7 +25,10 @@ export async function ModulesList() {
     )
   } catch (error) {
     console.error("Failed to load modules:", error)
-    return <ErrorModulesState />
+    return <>
+      <ErrorModulesState />
+      <ModulesListCachedFallback />
+    </>
   }
 }
 
@@ -122,4 +126,28 @@ function ErrorModulesState() {
       </AlertDescription>
     </Alert>
   )
+}
+
+// Client-only fallback to use cached modules if available
+function ModulesListCachedFallback() {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem('modules:list')
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { value: { id: string; name: string; hasQuestions: boolean; hasFlashcards: boolean }[]; ts: number }
+    const modules = parsed?.value ?? []
+    if (!Array.isArray(modules) || modules.length === 0) return null
+    return (
+      <div className="mt-6">
+        <p className="text-sm text-muted-foreground mb-2">Showing cached modules (offline)</p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map((m) => (
+            <ModuleCard key={m.id} module={m} />
+          ))}
+        </div>
+      </div>
+    )
+  } catch {
+    return null
+  }
 }
