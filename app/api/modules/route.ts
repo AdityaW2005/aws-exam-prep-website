@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+export const runtime = 'nodejs'
 import { discoverModules } from "@/lib/github"
 import type { Module } from "@/types/quiz"
 
@@ -13,6 +14,7 @@ export async function GET() {
         try {
           const response = await fetch(
             `https://raw.githubusercontent.com/AdityaW2005/aws-modules-qb/main/flashcards/aws_${id}_fc.md`,
+            { method: 'HEAD', cache: 'no-store' }
           )
           hasFlashcards = response.ok
         } catch {
@@ -30,7 +32,7 @@ export async function GET() {
 
     return NextResponse.json({ modules })
   } catch (error) {
-    console.error("Failed to discover modules:", error)
-    return NextResponse.json({ error: "Failed to discover modules" }, { status: 500 })
+  console.error("Failed to discover modules:", error)
+  return NextResponse.json({ error: "Failed to discover modules", details: String(error) }, { status: 500 })
   }
 }

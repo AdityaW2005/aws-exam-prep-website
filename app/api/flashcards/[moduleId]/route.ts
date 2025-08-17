@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+export const runtime = 'nodejs'
 import { fetchFlashcards } from "@/lib/github"
 import { parseFlashcards } from "@/lib/parsers"
 

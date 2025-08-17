@@ -5,6 +5,9 @@ const getBaseUrl = () => {
     // Browser should use relative URL
     return ''
   }
+  // Prefer explicit site URL if provided
+  const explicit = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL
+  if (explicit) return explicit.replace(/\/$/, '')
   if (process.env.VERCEL_URL) {
     // Reference for vercel.com
     return `https://${process.env.VERCEL_URL}`

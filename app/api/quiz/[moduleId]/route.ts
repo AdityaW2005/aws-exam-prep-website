@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+export const runtime = 'nodejs'
 import { fetchQuestionBank } from "@/lib/github"
 import { parseQuestions } from "@/lib/parsers"
 

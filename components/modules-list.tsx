@@ -5,12 +5,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { BookOpen, Brain, Clock, AlertCircle, Github } from "lucide-react"
 import Link from "next/link"
 import { getModules } from "@/lib/api"
+import { serverGetModules } from "@/lib/server-api"
 import { RefreshButton, ErrorRefreshButton } from "@/components/refresh-buttons"
 import * as React from "react"
 
 export async function ModulesList() {
   try {
-    const modules = await getModules()
+  // Prefer server-side fetch for initial render to ensure correct absolute URL on Vercel
+  const modules = await serverGetModules().catch(() => getModules())
 
     if (modules.length === 0) {
       return <EmptyModulesState />
