@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
-import { Clock, CheckCircle2, AlertCircle, Home, RefreshCw, Send, ChevronLeft, ChevronRight } from "lucide-react"
+import { Clock, CheckCircle2, AlertCircle, Home, RefreshCw, Send, ChevronLeft, ChevronRight, Eye, EyeOff, Bug } from "lucide-react"
 import Link from "next/link"
 import { getQuizQuestions } from "@/lib/api"
 import { scoreQuiz } from "@/lib/scoring"
@@ -25,6 +25,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(0)
+  const [showAnswer, setShowAnswer] = useState(false)
 
   useEffect(() => {
     async function loadQuiz() {
@@ -158,6 +159,7 @@ export default function QuizPage({ params }: QuizPageProps) {
       currentQuestionIndex: newIndex,
       questionStartTimes: [...quizState.questionStartTimes, now],
     })
+    setShowAnswer(false)
   }
 
   const goToPreviousQuestion = () => {
@@ -167,6 +169,7 @@ export default function QuizPage({ params }: QuizPageProps) {
       ...quizState,
       currentQuestionIndex: quizState.currentQuestionIndex - 1,
     })
+    setShowAnswer(false)
   }
 
   const handleSubmit = () => {
@@ -247,6 +250,10 @@ export default function QuizPage({ params }: QuizPageProps) {
                 {currentQuestion.difficulty === "E" ? "Easy" : currentQuestion.difficulty === "M" ? "Medium" : "Hard"}
               </Badge>
               <Badge variant="outline">{currentQuestion.qtype === "SA" ? "Single Answer" : "Multi-Select"}</Badge>
+              <Button onClick={handleSubmit} className="flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                Submit
+              </Button>
             </div>
           </div>
           <div className="mt-4">
@@ -262,6 +269,9 @@ export default function QuizPage({ params }: QuizPageProps) {
             question={currentQuestion}
             selectedOptions={currentResponses}
             onOptionSelect={handleOptionSelect}
+            showAnswer={showAnswer}
+            onToggleShowAnswer={() => setShowAnswer((v) => !v)}
+            moduleId={moduleId}
           />
 
           {/* Navigation */}
@@ -321,48 +331,118 @@ function QuestionCard({
   question,
   selectedOptions,
   onOptionSelect,
+  showAnswer,
+  onToggleShowAnswer,
+  moduleId,
 }: {
   question: Question
   selectedOptions: OptionKey[]
   onOptionSelect: (option: OptionKey) => void
+  showAnswer: boolean
+  onToggleShowAnswer: () => void
+  moduleId: string
 }) {
+  const createGitHubIssueUrl = (questionIndex: number, questionText: string) => {
+    const baseUrl = "https://github.com/AdityaW2005/aws-modules-qb/issues/new"
+    const title = encodeURIComponent(
+      `Issue with Question ${questionIndex} in Module ${moduleId.toUpperCase()}`,
+    )
+    const body = encodeURIComponent(`**Question:** ${questionText}
+
+**Module:** ${moduleId.toUpperCase()}
+**Question Number:** ${questionIndex}
+
+**Issue Description:**
+Please describe the issue with this question (incorrect answer, unclear explanation, etc.):
+
+**Expected Behavior:**
+What should the correct answer or explanation be?
+
+**Additional Context:**
+Add any other context about the problem here.`)
+
+    return `${baseUrl}?title=${title}&body=${body}&labels=question-issue`
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl leading-relaxed">
-          {question.text}
-          {question.qtype === "MS" && question.chooseN && (
-            <Badge variant="secondary" className="ml-3">
-              Choose {question.chooseN}
-            </Badge>
-          )}
-        </CardTitle>
+        <div className="flex items-start justify-between gap-4">
+          <CardTitle className="text-xl leading-relaxed">
+            {question.text}
+            {question.qtype === "MS" && question.chooseN && (
+              <Badge variant="secondary" className="ml-3">
+                Choose {question.chooseN}
+              </Badge>
+            )}
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onToggleShowAnswer} className="bg-transparent">
+              {showAnswer ? (
+                <>
+                  <EyeOff className="h-4 w-4" /> Hide Answer
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4" /> Show Answer
+                </>
+              )}
+            </Button>
+            <Button variant="outline" size="sm" asChild className="bg-transparent">
+              <a
+                href={createGitHubIssueUrl(question.index, question.text)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Bug className="h-4 w-4" /> Report Issue
+              </a>
+            </Button>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {(["A", "B", "C", "D"] as OptionKey[]).map((optionKey, index) => {
           const isSelected = selectedOptions.includes(optionKey)
+          const isCorrect = question.answer.includes(optionKey)
+          const borderClass = showAnswer
+            ? isCorrect
+              ? "border-green-500 bg-green-50 dark:bg-green-950/20"
+              : isSelected
+                ? "border-red-500 bg-red-50 dark:bg-red-950/20"
+                : "border-border bg-card"
+            : isSelected
+              ? "border-primary bg-primary/10 shadow-sm"
+              : "border-border bg-card hover:border-primary/50"
+
           return (
             <button
               key={optionKey}
               onClick={() => onOptionSelect(optionKey)}
-              className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:shadow-md ${
-                isSelected ? "border-primary bg-primary/10 shadow-sm" : "border-border bg-card hover:border-primary/50"
-              }`}
+              className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:shadow-md ${borderClass}`}
             >
               <div className="flex items-start gap-3">
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-medium ${
-                    isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground/30 bg-background"
+                    showAnswer
+                      ? isCorrect
+                        ? "border-green-500 bg-green-500 text-white"
+                        : isSelected
+                          ? "border-red-500 bg-red-500 text-white"
+                          : "border-muted-foreground/30 bg-background"
+                      : isSelected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-muted-foreground/30 bg-background"
                   }`}
                 >
-                  {isSelected ? <CheckCircle2 className="h-4 w-4" /> : optionKey}
+                  {isSelected && !showAnswer ? <CheckCircle2 className="h-4 w-4" /> : optionKey}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Option {optionKey}</span>
                     <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">{index + 1}</kbd>
+                    {showAnswer && isCorrect && (
+                      <Badge variant="secondary" className="ml-2">Correct</Badge>
+                    )}
                   </div>
                   <p className="mt-1 leading-relaxed">{question.options[optionKey]}</p>
                 </div>
@@ -370,6 +450,13 @@ function QuestionCard({
             </button>
           )
         })}
+
+        {showAnswer && (
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <h5 className="font-semibold mb-2">Explanation</h5>
+            <p className="text-sm leading-relaxed">{question.explanation}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

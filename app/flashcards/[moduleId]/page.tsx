@@ -388,6 +388,25 @@ function FlashcardDisplay({
   onMarkKnown: () => void
   onMarkUnknown: () => void
 }) {
+  // Extract moduleId from URL for issue template
+  const moduleId = typeof window !== 'undefined' ? (window.location.pathname.split('/').filter(Boolean)[1] ?? '') : ''
+  const createGitHubIssueUrl = (questionText: string) => {
+    const baseUrl = "https://github.com/AdityaW2005/aws-modules-qb/issues/new"
+    const title = encodeURIComponent(`Issue with Flashcard in Module ${moduleId.toUpperCase()}`)
+    const body = encodeURIComponent(`**Flashcard Question:** ${questionText}
+
+**Module:** ${moduleId.toUpperCase()}
+
+**Issue Description:**
+Describe the issue with this flashcard (incorrect answer, unclear wording, duplicate, etc.):
+
+**Suggested Fix:**
+Provide the correct answer or improved wording if possible.
+
+**Additional Context:**
+Add any other context about the problem here.`)
+    return `${baseUrl}?title=${title}&body=${body}&labels=flashcard-issue`
+  }
   return (
     <div className="space-y-6">
       {/* Question Card */}
@@ -423,6 +442,11 @@ function FlashcardDisplay({
                   Unknown
                 </Badge>
               )}
+              <Button variant="outline" size="sm" asChild className="bg-transparent">
+                <a href={createGitHubIssueUrl(card.question)} target="_blank" rel="noopener noreferrer">
+                  Report Issue
+                </a>
+              </Button>
               <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                 {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
