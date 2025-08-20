@@ -391,7 +391,7 @@ function FlashcardDisplay({
   // Extract moduleId from URL for issue template
   const moduleId = typeof window !== 'undefined' ? (window.location.pathname.split('/').filter(Boolean)[1] ?? '') : ''
   const createGitHubIssueUrl = (questionText: string) => {
-    const baseUrl = "https://github.com/AdityaW2005/aws-modules-qb/issues/new"
+    const baseUrl = "https://github.com/AdityaW2005/aws-modules-pdf-and-qb/issues/new"
     const title = encodeURIComponent(`Issue with Flashcard in Module ${moduleId.toUpperCase()}`)
     const body = encodeURIComponent(`**Flashcard Question:** ${questionText}
 

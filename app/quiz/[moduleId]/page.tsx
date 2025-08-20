@@ -343,7 +343,7 @@ function QuestionCard({
   moduleId: string
 }) {
   const createGitHubIssueUrl = (questionIndex: number, questionText: string) => {
-    const baseUrl = "https://github.com/AdityaW2005/aws-modules-qb/issues/new"
+    const baseUrl = "https://github.com/AdityaW2005/aws-exam-prep-website/issues/new"
     const title = encodeURIComponent(
       `Issue with Question ${questionIndex} in Module ${moduleId.toUpperCase()}`,
     )
