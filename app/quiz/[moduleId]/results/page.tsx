@@ -386,7 +386,11 @@ function QuestionReview({
                           ? "default"
                           : "destructive"
                     }
-                    className="text-xs"
+                    className={
+                      question.difficulty === "H" 
+                        ? "bg-red-500 text-white border-red-600 font-semibold" 
+                        : ""
+                    }
                   >
                     {question.difficulty === "E" ? "Easy" : question.difficulty === "M" ? "Medium" : "Hard"}
                   </Badge>
