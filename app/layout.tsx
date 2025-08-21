@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistMono } from "geist/font/mono"
 import { ThemeProvider } from "@/components/theme-provider" // Added ThemeProvider import
+import { GoogleAnalytics } from "@/components/GoogleAnalytics"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ html {
         `}</style>
       </head>
       <body className="font-sans antialiased">
+        <GoogleAnalytics />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
