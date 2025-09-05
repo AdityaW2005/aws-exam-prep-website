@@ -261,45 +261,46 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  Home
+                <Button variant="ghost" size="sm" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3">
+                  <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Home</span>
                 </Button>
               </Link>
-              <div className="h-6 w-px bg-border" />
+              <div className="h-4 sm:h-6 w-px bg-border" />
               <div>
-                <h1 className="font-semibold">Module {moduleId.toUpperCase()} Flashcards</h1>
-                <p className="text-sm text-muted-foreground">
+                <h1 className="text-sm sm:text-base font-semibold">Module {moduleId.toUpperCase()} Flashcards</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Card {state.currentIndex + 1} of {state.flashcards.length}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <FlashcardStats
                 knownCount={state.knownCards.size}
                 unknownCount={state.unknownCards.size}
                 totalCount={state.flashcards.length}
               />
               {state.isShuffled && (
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 text-xs">
                   <Shuffle className="h-3 w-3" />
-                  Shuffled
+                  <span className="hidden sm:inline">Shuffled</span>
+                  <span className="sm:hidden">Shuffled</span>
                 </Badge>
               )}
             </div>
           </div>
-          <div className="mt-4">
-            <Progress value={progress} className="h-2" />
+          <div className="mt-3 sm:mt-4">
+            <Progress value={progress} className="h-1.5 sm:h-2" />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
           <FlashcardDisplay
             card={currentCard}
@@ -311,39 +312,58 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
           />
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between mt-8">
-            <Button variant="outline" onClick={goToPrevious} className="flex items-center gap-2 bg-transparent">
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 gap-4 sm:gap-0">
+            <Button 
+              variant="outline" 
+              onClick={goToPrevious} 
+              className="flex items-center gap-2 bg-transparent w-full sm:w-auto"
+            >
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
 
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={shuffleCards} className="flex items-center gap-2 bg-transparent">
-                <Shuffle className="h-4 w-4" />
-                Shuffle
+            <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                onClick={shuffleCards} 
+                className="flex items-center gap-2 bg-transparent w-full sm:w-auto text-xs sm:text-sm"
+              >
+                <Shuffle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Shuffle</span>
+                <span className="sm:hidden">Shuffle</span>
               </Button>
               {state.isShuffled && (
-                <Button variant="outline" onClick={resetOrder} className="flex items-center gap-2 bg-transparent">
-                  <RotateCcw className="h-4 w-4" />
-                  Original Order
+                <Button 
+                  variant="outline" 
+                  onClick={resetOrder} 
+                  className="flex items-center gap-2 bg-transparent w-full sm:w-auto text-xs sm:text-sm"
+                >
+                  <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Original Order</span>
+                  <span className="sm:hidden">Original</span>
                 </Button>
               )}
-              <Button variant="outline" onClick={resetProgress} className="flex items-center gap-2 bg-transparent">
-                <RefreshCw className="h-4 w-4" />
-                Reset Progress
+              <Button 
+                variant="outline" 
+                onClick={resetProgress} 
+                className="flex items-center gap-2 bg-transparent w-full sm:w-auto text-xs sm:text-sm"
+              >
+                <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Reset Progress</span>
+                <span className="sm:hidden">Reset</span>
               </Button>
             </div>
 
-            <Button onClick={goToNext} className="flex items-center gap-2">
+            <Button onClick={goToNext} className="flex items-center gap-2 w-full sm:w-auto">
               Next
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Keyboard Shortcuts Help */}
-          <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-            <h3 className="font-medium mb-3">Keyboard Shortcuts</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-muted-foreground">
+          <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-muted/50 rounded-lg">
+            <h3 className="font-medium mb-3 text-sm sm:text-base">Keyboard Shortcuts</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground">
               <div>
                 <kbd className="px-1.5 py-0.5 bg-background rounded text-xs">←/A</kbd> Previous card
               </div>
@@ -408,10 +428,10 @@ Add any other context about the problem here.`)
     return `${baseUrl}?title=${title}&body=${body}&labels=flashcard-issue`
   }
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Question Card */}
       <Card
-        className={`min-h-[300px] cursor-pointer transition-all duration-200 hover:shadow-lg ${
+        className={`min-h-[250px] sm:min-h-[300px] cursor-pointer transition-all duration-200 hover:shadow-lg ${
           cardStatus === "known"
             ? "border-green-500 bg-green-50 dark:bg-green-950/20"
             : cardStatus === "unknown"
@@ -420,44 +440,45 @@ Add any other context about the problem here.`)
         }`}
         onClick={onToggleAnswer}
       >
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
+        <CardHeader className="pb-3 sm:pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-2">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               Question
             </CardTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {cardStatus === "known" && (
                 <Badge
                   variant="secondary"
-                  className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                  className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs"
                 >
                   <CheckCircle2 className="h-3 w-3 mr-1" />
                   Known
                 </Badge>
               )}
               {cardStatus === "unknown" && (
-                <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs">
                   <XCircle className="h-3 w-3 mr-1" />
                   Unknown
                 </Badge>
               )}
-              <Button variant="outline" size="sm" asChild className="bg-transparent">
+              <Button variant="outline" size="sm" asChild className="bg-transparent text-xs sm:text-sm">
                 <a href={createGitHubIssueUrl(card.question)} target="_blank" rel="noopener noreferrer">
-                  Report Issue
+                  <span className="hidden sm:inline">Report Issue</span>
+                  <span className="sm:hidden">Report</span>
                 </a>
               </Button>
               <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-                {showAnswer ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showAnswer ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4" />}
               </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <p className="text-lg leading-relaxed">{card.question}</p>
+        <CardContent className="px-4 sm:px-6">
+          <p className="text-base sm:text-lg leading-relaxed">{card.question}</p>
           {!showAnswer && (
-            <div className="mt-6 text-center">
-              <p className="text-muted-foreground text-sm">Click to reveal answer or press Space</p>
+            <div className="mt-4 sm:mt-6 text-center">
+              <p className="text-muted-foreground text-xs sm:text-sm">Click to reveal answer or press Space</p>
             </div>
           )}
         </CardContent>
@@ -465,21 +486,21 @@ Add any other context about the problem here.`)
 
       {/* Answer Card */}
       {showAnswer && (
-        <Card className="min-h-[200px] border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
+        <Card className="min-h-[150px] sm:min-h-[200px] border-primary/20 bg-primary/5">
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               Answer
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="px-4 sm:px-6">
+            <div className="space-y-2 sm:space-y-3">
               {card.answers.map((answer, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium mt-0.5">
+                <div key={index} className="flex items-start gap-2 sm:gap-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs sm:text-sm font-medium mt-0.5 flex-shrink-0">
                     {card.answers.length > 1 ? index + 1 : "A"}
                   </div>
-                  <p className="text-lg leading-relaxed flex-1">{answer}</p>
+                  <p className="text-sm sm:text-base lg:text-lg leading-relaxed flex-1 break-words">{answer}</p>
                 </div>
               ))}
             </div>
@@ -489,11 +510,11 @@ Add any other context about the problem here.`)
 
       {/* Action Buttons */}
       {showAnswer && (
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
           <Button
             variant={cardStatus === "unknown" ? "destructive" : "outline"}
             onClick={onMarkUnknown}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <XCircle className="h-4 w-4" />
             Mark as Unknown
@@ -501,7 +522,7 @@ Add any other context about the problem here.`)
           <Button
             variant={cardStatus === "known" ? "default" : "outline"}
             onClick={onMarkKnown}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <CheckCircle2 className="h-4 w-4" />
             Mark as Known

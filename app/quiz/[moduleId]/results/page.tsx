@@ -119,20 +119,20 @@ Add any other context about the problem here.`)
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Quiz Results</h1>
-              <p className="text-muted-foreground mt-1">Module {moduleId.toUpperCase()} Performance Summary</p>
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Quiz Results</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">Module {moduleId.toUpperCase()} Performance Summary</p>
             </div>
-            <div className="flex items-center gap-3">
-              <Link href="/">
-                <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <Link href="/" className="w-full sm:w-auto">
+                <Button variant="outline" className="flex items-center justify-center gap-2 bg-transparent w-full sm:w-auto">
                   <Home className="h-4 w-4" />
                   Home
                 </Button>
               </Link>
-              <Button onClick={retakeQuiz} className="flex items-center gap-2">
+              <Button onClick={retakeQuiz} className="flex items-center justify-center gap-2 w-full sm:w-auto">
                 <RefreshCw className="h-4 w-4" />
                 Retake Quiz
               </Button>
@@ -142,47 +142,47 @@ Add any other context about the problem here.`)
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
           {/* Score Overview */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Main Score Card */}
-            <Card className="md:col-span-2 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-              <CardHeader className="text-center pb-4">
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <ScoreIcon className="h-8 w-8 text-primary" />
-                  <Badge variant={scoreBadge.variant} className="text-lg px-4 py-1">
+            <Card className="lg:col-span-2 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+              <CardHeader className="text-center pb-3 sm:pb-4">
+                <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
+                  <ScoreIcon className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                  <Badge variant={scoreBadge.variant} className="text-sm sm:text-lg px-3 sm:px-4 py-1">
                     {scoreBadge.text}
                   </Badge>
                 </div>
-                <CardTitle className="text-4xl font-bold">
+                <CardTitle className="text-3xl sm:text-4xl font-bold">
                   <span className={getScoreColor(results.percentage)}>
                     {results.score}/{results.total}
                   </span>
                 </CardTitle>
-                <p className="text-2xl font-semibold text-primary">{results.percentage}%</p>
+                <p className="text-xl sm:text-2xl font-semibold text-primary">{results.percentage}%</p>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="flex flex-col items-center gap-2">
-                    <CheckCircle2 className="h-6 w-6 text-green-500" />
+                <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+                  <div className="flex flex-col items-center gap-1 sm:gap-2">
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
                     <div>
-                      <p className="text-2xl font-bold text-green-600">{results.correctCount}</p>
-                      <p className="text-sm text-muted-foreground">Correct</p>
+                      <p className="text-lg sm:text-2xl font-bold text-green-600">{results.correctCount}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Correct</p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <XCircle className="h-6 w-6 text-red-500" />
+                  <div className="flex flex-col items-center gap-1 sm:gap-2">
+                    <XCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
                     <div>
-                      <p className="text-2xl font-bold text-red-600">{results.wrongCount}</p>
-                      <p className="text-sm text-muted-foreground">Incorrect</p>
+                      <p className="text-lg sm:text-2xl font-bold text-red-600">{results.wrongCount}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Incorrect</p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <AlertCircle className="h-6 w-6 text-yellow-500" />
+                  <div className="flex flex-col items-center gap-1 sm:gap-2">
+                    <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
                     <div>
-                      <p className="text-2xl font-bold text-yellow-600">{results.unansweredCount}</p>
-                      <p className="text-sm text-muted-foreground">Unanswered</p>
+                      <p className="text-lg sm:text-2xl font-bold text-yellow-600">{results.unansweredCount}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Unanswered</p>
                     </div>
                   </div>
                 </div>
@@ -192,25 +192,25 @@ Add any other context about the problem here.`)
             {/* Time Analytics */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   Time Analytics
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Time</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Total Time</p>
+                  <p className="text-xl sm:text-2xl font-bold">
                     {Math.floor(results.timeTotalSec / 60)}:{(results.timeTotalSec % 60).toString().padStart(2, "0")}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Average per Question</p>
-                  <p className="text-xl font-semibold">{Math.round(results.timeTotalSec / results.total)}s</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Average per Question</p>
+                  <p className="text-lg sm:text-xl font-semibold">{Math.round(results.timeTotalSec / results.total)}s</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Questions per Minute</p>
-                  <p className="text-xl font-semibold">{((results.total / results.timeTotalSec) * 60).toFixed(1)}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Questions per Minute</p>
+                  <p className="text-lg sm:text-xl font-semibold">{((results.total / results.timeTotalSec) * 60).toFixed(1)}</p>
                 </div>
               </CardContent>
             </Card>
@@ -219,8 +219,8 @@ Add any other context about the problem here.`)
           {/* Performance Insights */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 Performance Insights
               </CardTitle>
             </CardHeader>
@@ -232,8 +232,8 @@ Add any other context about the problem here.`)
           {/* Detailed Question Review */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 Question-by-Question Review
               </CardTitle>
             </CardHeader>
@@ -249,14 +249,14 @@ Add any other context about the problem here.`)
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-4">
-            <Link href="/">
-              <Button variant="outline" size="lg" className="flex items-center gap-2 bg-transparent">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <Link href="/" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="flex items-center justify-center gap-2 bg-transparent w-full sm:w-auto">
                 <Home className="h-5 w-5" />
                 Back to Home
               </Button>
             </Link>
-            <Button onClick={retakeQuiz} size="lg" className="flex items-center gap-2">
+            <Button onClick={retakeQuiz} size="lg" className="flex items-center justify-center gap-2 w-full sm:w-auto">
               <RefreshCw className="h-5 w-5" />
               Retake Quiz
             </Button>
@@ -290,9 +290,9 @@ function PerformanceInsights({
   })
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <div>
-        <h4 className="font-semibold mb-3">Performance by Difficulty</h4>
+        <h4 className="font-semibold mb-3 text-sm sm:text-base">Performance by Difficulty</h4>
         <div className="space-y-3">
           {Object.entries(difficultyStats).map(([difficulty, stats]) => {
             const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
@@ -302,15 +302,15 @@ function PerformanceInsights({
                 <div className="flex items-center gap-2">
                   <Badge
                     variant={difficulty === "E" ? "secondary" : difficulty === "M" ? "default" : "destructive"}
-                    className="w-16 justify-center"
+                    className="w-14 sm:w-16 justify-center text-xs sm:text-sm"
                   >
                     {difficultyName}
                   </Badge>
-                  <span className="text-sm">
+                  <span className="text-xs sm:text-sm">
                     {stats.correct}/{stats.total}
                   </span>
                 </div>
-                <span className={`font-semibold ${getScoreColor(percentage)}`}>{percentage}%</span>
+                <span className={`font-semibold text-sm sm:text-base ${getScoreColor(percentage)}`}>{percentage}%</span>
               </div>
             )
           })}
@@ -318,7 +318,7 @@ function PerformanceInsights({
       </div>
 
       <div>
-        <h4 className="font-semibold mb-3">Performance by Question Type</h4>
+        <h4 className="font-semibold mb-3 text-sm sm:text-base">Performance by Question Type</h4>
         <div className="space-y-3">
           {Object.entries(typeStats).map(([type, stats]) => {
             const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
@@ -326,14 +326,14 @@ function PerformanceInsights({
             return (
               <div key={type} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="w-24 justify-center">
+                  <Badge variant="outline" className="w-20 sm:w-24 justify-center text-xs sm:text-sm">
                     {typeName}
                   </Badge>
-                  <span className="text-sm">
+                  <span className="text-xs sm:text-sm">
                     {stats.correct}/{stats.total}
                   </span>
                 </div>
-                <span className={`font-semibold ${getScoreColor(percentage)}`}>{percentage}%</span>
+                <span className={`font-semibold text-sm sm:text-base ${getScoreColor(percentage)}`}>{percentage}%</span>
               </div>
             )
           })}

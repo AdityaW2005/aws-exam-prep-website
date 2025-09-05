@@ -35,10 +35,12 @@ html {
 }
         `}</style>
       </head>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased overflow-x-hidden">
         <GoogleAnalytics />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          <div className="min-h-screen w-full">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>

@@ -216,27 +216,29 @@ export default function QuizPage({ params }: QuizPageProps) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  Home
+                <Button variant="ghost" size="sm" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3">
+                  <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Home</span>
                 </Button>
               </Link>
-              <div className="h-6 w-px bg-border" />
+              <div className="h-4 sm:h-6 w-px bg-border" />
               <div>
-                <h1 className="font-semibold">Module {moduleId.toUpperCase()} Quiz</h1>
-                <p className="text-sm text-muted-foreground">
+                <h1 className="text-sm sm:text-base font-semibold">Module {moduleId.toUpperCase()} Quiz</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Question {quizState.currentQuestionIndex + 1} of {quizState.questions.length}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, "0")}
+            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="font-mono">
+                  {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, "0")}
+                </span>
               </div>
               <Badge
                 variant={
@@ -246,24 +248,36 @@ export default function QuizPage({ params }: QuizPageProps) {
                       ? "default"
                       : "destructive"
                 }
+                className={`text-xs ${
+                  currentQuestion.difficulty === "H" 
+                    ? "bg-red-500 text-white border-red-600 font-semibold" 
+                    : ""
+                }`}
               >
                 {currentQuestion.difficulty === "E" ? "Easy" : currentQuestion.difficulty === "M" ? "Medium" : "Hard"}
               </Badge>
-              <Badge variant="outline">{currentQuestion.qtype === "SA" ? "Single Answer" : "Multi-Select"}</Badge>
-              <Button onClick={handleSubmit} className="flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                Submit
+              <Badge variant="outline" className="text-xs hidden sm:inline-flex">
+                {currentQuestion.qtype === "SA" ? "Single" : "Multi"}
+              </Badge>
+              <Button 
+                onClick={handleSubmit} 
+                size="sm" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+              >
+                <Send className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Submit</span>
+                <span className="sm:hidden">Submit</span>
               </Button>
             </div>
           </div>
-          <div className="mt-4">
-            <Progress value={progress} className="h-2" />
+          <div className="mt-3 sm:mt-4">
+            <Progress value={progress} className="h-1.5 sm:h-2" />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
           <QuestionCard
             question={currentQuestion}
@@ -275,38 +289,38 @@ export default function QuizPage({ params }: QuizPageProps) {
           />
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 gap-4 sm:gap-0">
             <Button
               variant="outline"
               onClick={goToPreviousQuestion}
               disabled={quizState.currentQuestionIndex === 0}
-              className="flex items-center gap-2 bg-transparent"
+              className="flex items-center gap-2 bg-transparent w-full sm:w-auto"
             >
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Button>
 
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="hidden md:flex items-center gap-2 text-xs sm:text-sm text-muted-foreground text-center">
               <span>Use 1-4 keys to select • P/N to navigate • S to submit</span>
             </div>
 
             {quizState.currentQuestionIndex === quizState.questions.length - 1 ? (
-              <Button onClick={handleSubmit} className="flex items-center gap-2">
+              <Button onClick={handleSubmit} className="flex items-center gap-2 w-full sm:w-auto">
                 <Send className="h-4 w-4" />
                 Submit Quiz
               </Button>
             ) : (
-              <Button onClick={goToNextQuestion} className="flex items-center gap-2">
+              <Button onClick={goToNextQuestion} className="flex items-center gap-2 w-full sm:w-auto">
                 Next
                 <ChevronRight className="h-4 w-4" />
               </Button>
             )}
           </div>
 
-          {/* Keyboard Shortcuts Help */}
-          <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-            <h3 className="font-medium mb-2">Keyboard Shortcuts</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-muted-foreground">
+          {/* Mobile keyboard shortcuts help */}
+          <div className="block md:hidden mt-4 p-3 bg-muted/50 rounded-lg">
+            <h3 className="font-medium mb-2 text-sm">Keyboard Shortcuts</h3>
+            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
               <div>
                 <kbd className="px-1.5 py-0.5 bg-background rounded text-xs">1-4</kbd> Select options
               </div>
@@ -366,41 +380,57 @@ Add any other context about the problem here.`)
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <CardTitle className="text-xl leading-relaxed">
+      <CardHeader className="pb-3 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+          <CardTitle className="text-lg sm:text-xl leading-relaxed pr-0 sm:pr-4">
             {question.text}
             {question.qtype === "MS" && question.chooseN && (
-              <Badge variant="secondary" className="ml-3">
+              <Badge variant="secondary" className="ml-2 sm:ml-3 text-xs">
                 Choose {question.chooseN}
               </Badge>
             )}
           </CardTitle>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={onToggleShowAnswer} className="bg-transparent">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={onToggleShowAnswer} 
+              className="bg-transparent text-xs sm:text-sm flex-1 sm:flex-none"
+            >
               {showAnswer ? (
                 <>
-                  <EyeOff className="h-4 w-4" /> Hide Answer
+                  <EyeOff className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Hide Answer</span>
+                  <span className="sm:hidden">Hide</span>
                 </>
               ) : (
                 <>
-                  <Eye className="h-4 w-4" /> Show Answer
+                  <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="hidden sm:inline">Show Answer</span>
+                  <span className="sm:hidden">Show</span>
                 </>
               )}
             </Button>
-            <Button variant="outline" size="sm" asChild className="bg-transparent">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              asChild 
+              className="bg-transparent text-xs sm:text-sm flex-1 sm:flex-none"
+            >
               <a
                 href={createGitHubIssueUrl(question.index, question.text)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Bug className="h-4 w-4" /> Report Issue
+                <Bug className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                <span className="hidden sm:inline">Report Issue</span>
+                <span className="sm:hidden">Report</span>
               </a>
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
         {(["A", "B", "C", "D"] as OptionKey[]).map((optionKey, index) => {
           const isSelected = selectedOptions.includes(optionKey)
           const isCorrect = question.answer.includes(optionKey)
@@ -418,11 +448,11 @@ Add any other context about the problem here.`)
             <button
               key={optionKey}
               onClick={() => onOptionSelect(optionKey)}
-              className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:shadow-md ${borderClass}`}
+              className={`w-full p-3 sm:p-4 text-left rounded-lg border-2 transition-all duration-200 hover:shadow-md ${borderClass}`}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2 sm:gap-3">
                 <div
-                  className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-medium ${
+                  className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 text-xs sm:text-sm font-medium flex-shrink-0 ${
                     showAnswer
                       ? isCorrect
                         ? "border-green-500 bg-green-500 text-white"
@@ -434,17 +464,17 @@ Add any other context about the problem here.`)
                         : "border-muted-foreground/30 bg-background"
                   }`}
                 >
-                  {isSelected && !showAnswer ? <CheckCircle2 className="h-4 w-4" /> : optionKey}
+                  {isSelected && !showAnswer ? <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4" /> : optionKey}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Option {optionKey}</span>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">{index + 1}</kbd>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs sm:text-sm text-muted-foreground">Option {optionKey}</span>
+                    <kbd className="px-1 sm:px-1.5 py-0.5 bg-muted rounded text-xs">{index + 1}</kbd>
                     {showAnswer && isCorrect && (
-                      <Badge variant="secondary" className="ml-2">Correct</Badge>
+                      <Badge variant="secondary" className="ml-2 text-xs">Correct</Badge>
                     )}
                   </div>
-                  <p className="mt-1 leading-relaxed">{question.options[optionKey]}</p>
+                  <p className="text-sm sm:text-base leading-relaxed break-words">{question.options[optionKey]}</p>
                 </div>
               </div>
             </button>
@@ -452,9 +482,9 @@ Add any other context about the problem here.`)
         })}
 
         {showAnswer && (
-          <div className="bg-muted/50 p-4 rounded-lg">
-            <h5 className="font-semibold mb-2">Explanation</h5>
-            <p className="text-sm leading-relaxed">{question.explanation}</p>
+          <div className="bg-muted/50 p-3 sm:p-4 rounded-lg mt-4">
+            <h5 className="font-semibold mb-2 text-sm sm:text-base">Explanation</h5>
+            <p className="text-xs sm:text-sm leading-relaxed">{question.explanation}</p>
           </div>
         )}
       </CardContent>
