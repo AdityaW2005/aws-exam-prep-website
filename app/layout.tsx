@@ -1,4 +1,5 @@
 import type React from "react"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { GeistMono } from "geist/font/mono"
 import { ThemeProvider } from "@/components/theme-provider" // Added ThemeProvider import
@@ -36,7 +37,9 @@ html {
         `}</style>
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
-        <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <div className="min-h-screen w-full">
             {children}

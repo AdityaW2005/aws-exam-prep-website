@@ -100,7 +100,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </p>
             </div>
             
-            <CourseSelector />
+            <Suspense fallback={null}>
+              <CourseSelector />
+            </Suspense>
             <Suspense fallback={<ModulesSkeleton />}>
               <ModulesList courseId={courseId} />
             </Suspense>
