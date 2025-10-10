@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { COURSE_MAP, DEFAULT_COURSE_ID } from "@/lib/github"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -23,6 +24,8 @@ export default function QuizPage({ params }: QuizPageProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const courseId = searchParams.get("courseId") || undefined
+  const resolvedCourseId = courseId && Object.values(COURSE_MAP).includes(courseId) ? courseId : DEFAULT_COURSE_ID
+  const courseName = (Object.entries(COURSE_MAP).find(([, id]) => id === resolvedCourseId)?.[0]) || "AWS Academy Cloud Foundations"
   const [quizState, setQuizState] = useState<QuizState | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -230,9 +233,12 @@ export default function QuizPage({ params }: QuizPageProps) {
               <div className="h-4 sm:h-6 w-px bg-border" />
               <div>
                 <h1 className="text-sm sm:text-base font-semibold">Module {moduleId.toUpperCase()} Quiz</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Question {quizState.currentQuestionIndex + 1} of {quizState.questions.length}
-                </p>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs">{courseName}</Badge>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Question {quizState.currentQuestionIndex + 1} of {quizState.questions.length}
+                  </p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
