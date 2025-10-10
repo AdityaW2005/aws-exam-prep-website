@@ -1,8 +1,25 @@
 const GITHUB_BASE_URL = process.env.GITHUB_RAW_BASE_URL?.replace(/\/$/, '') ||
   "https://raw.githubusercontent.com/AdityaW2005/aws-modules-qb/main"
 
-export async function fetchQuestionBank(moduleId: string): Promise<string> {
-  const url = `${GITHUB_BASE_URL}/question_banks/aws_${moduleId}_qb.md`
+// Supported courses and their IDs in the repository structure
+export const COURSE_MAP: Record<string, string> = {
+  // name: id
+  "AWS Academy Cloud Foundations": "128930",
+  "AWS Academy Cloud Architecting": "128932",
+}
+
+export const DEFAULT_COURSE_ID = COURSE_MAP["AWS Academy Cloud Foundations"]
+
+function resolveCourseId(courseId?: string | null): string {
+  const id = (courseId ?? '').trim()
+  // Accept only known IDs; fallback to default
+  if (Object.values(COURSE_MAP).includes(id)) return id
+  return DEFAULT_COURSE_ID
+}
+
+export async function fetchQuestionBank(moduleId: string, courseId?: string): Promise<string> {
+  const course = resolveCourseId(courseId)
+  const url = `${GITHUB_BASE_URL}/question_banks/${course}/aws_${moduleId}_qb.md`
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -12,8 +29,9 @@ export async function fetchQuestionBank(moduleId: string): Promise<string> {
   return response.text()
 }
 
-export async function fetchFlashcards(moduleId: string): Promise<string> {
-  const url = `${GITHUB_BASE_URL}/flashcards/aws_${moduleId}_fc.md`
+export async function fetchFlashcards(moduleId: string, courseId?: string): Promise<string> {
+  const course = resolveCourseId(courseId)
+  const url = `${GITHUB_BASE_URL}/flashcards/${course}/aws_${moduleId}_fc.md`
   const response = await fetch(url)
 
   if (!response.ok) {
@@ -23,7 +41,8 @@ export async function fetchFlashcards(moduleId: string): Promise<string> {
   return response.text()
 }
 
-export async function discoverModules(): Promise<string[]> {
+export async function discoverModules(courseId?: string): Promise<string[]> {
+  const course = resolveCourseId(courseId)
   // Use HEAD requests with small concurrency to avoid timeouts in serverless
   const exists = async (url: string) => {
     try {
@@ -61,7 +80,7 @@ export async function discoverModules(): Promise<string[]> {
 
   for (let i = 1; i <= maxToCheck; i++) {
     const moduleId = `m${i}`
-    const url = `${GITHUB_BASE_URL}/question_banks/aws_${moduleId}_qb.md`
+    const url = `${GITHUB_BASE_URL}/question_banks/${course}/aws_${moduleId}_qb.md`
     schedule(async () => {
       if (await exists(url)) {
         found.push(moduleId)

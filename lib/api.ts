@@ -44,12 +44,17 @@ const fromCached = <T,>(key: string, maxAgeMs: number): T | null => {
   return cached.value
 }
 
-export async function getModules(): Promise<Module[]> {
-  const cacheKey = 'modules:list'
+export async function getModules(courseId?: string): Promise<Module[]> {
+  const suffix = courseId ? `:${courseId}` : ''
+  const cacheKey = `modules:list${suffix}`
   const stale = fromCached<Module[]>(cacheKey, 6 * 60 * 60 * 1000) // 6h
 
   try {
-    const response = await fetch(`${getBaseUrl()}/api/modules`, { cache: 'no-store' })
+    const url = new URL(`${getBaseUrl()}/api/modules`, 'http://dummy')
+    // Workaround to build URL; we'll strip origin if running in browser
+    if (courseId) url.searchParams.set('courseId', courseId)
+    const href = typeof window !== 'undefined' ? `${url.pathname}${url.search}` : `${getBaseUrl()}${url.pathname}${url.search}`
+    const response = await fetch(href, { cache: 'no-store' })
     if (!response.ok) throw new Error("Failed to fetch modules")
     const data = await response.json()
     const modules: Module[] = data.modules ?? []
@@ -61,11 +66,15 @@ export async function getModules(): Promise<Module[]> {
   }
 }
 
-export async function getQuizQuestions(moduleId: string): Promise<Question[]> {
-  const cacheKey = `quiz:${moduleId}`
+export async function getQuizQuestions(moduleId: string, courseId?: string): Promise<Question[]> {
+  const suffix = courseId ? `:${courseId}` : ''
+  const cacheKey = `quiz:${moduleId}${suffix}`
   const stale = fromCached<Question[]>(cacheKey, 12 * 60 * 60 * 1000) // 12h
   try {
-    const response = await fetch(`${getBaseUrl()}/api/quiz/${moduleId}`, { cache: 'no-store' })
+    const url = new URL(`${getBaseUrl()}/api/quiz/${moduleId}`, 'http://dummy')
+    if (courseId) url.searchParams.set('courseId', courseId)
+    const href = typeof window !== 'undefined' ? `${url.pathname}${url.search}` : `${getBaseUrl()}${url.pathname}${url.search}`
+    const response = await fetch(href, { cache: 'no-store' })
     if (!response.ok) throw new Error(`Failed to fetch quiz for module ${moduleId}`)
     const data = await response.json()
     const questions: Question[] = data.questions ?? []
@@ -77,11 +86,15 @@ export async function getQuizQuestions(moduleId: string): Promise<Question[]> {
   }
 }
 
-export async function getFlashcards(moduleId: string): Promise<Flashcard[]> {
-  const cacheKey = `flashcards:${moduleId}`
+export async function getFlashcards(moduleId: string, courseId?: string): Promise<Flashcard[]> {
+  const suffix = courseId ? `:${courseId}` : ''
+  const cacheKey = `flashcards:${moduleId}${suffix}`
   const stale = fromCached<Flashcard[]>(cacheKey, 12 * 60 * 60 * 1000) // 12h
   try {
-    const response = await fetch(`${getBaseUrl()}/api/flashcards/${moduleId}`, { cache: 'no-store' })
+    const url = new URL(`${getBaseUrl()}/api/flashcards/${moduleId}`, 'http://dummy')
+    if (courseId) url.searchParams.set('courseId', courseId)
+    const href = typeof window !== 'undefined' ? `${url.pathname}${url.search}` : `${getBaseUrl()}${url.pathname}${url.search}`
+    const response = await fetch(href, { cache: 'no-store' })
     if (!response.ok) throw new Error(`Failed to fetch flashcards for module ${moduleId}`)
     const data = await response.json()
     const flashcards: Flashcard[] = data.flashcards ?? []

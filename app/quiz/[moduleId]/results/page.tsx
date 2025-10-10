@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -32,6 +32,8 @@ interface ResultsPageProps {
 export default function ResultsPage({ params }: ResultsPageProps) {
   const { moduleId } = React.use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const courseId = searchParams.get("courseId") || undefined
   const [results, setResults] = useState<QuizResultSummary | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
   const [responses, setResponses] = useState<Record<number, OptionKey[]>>({})
@@ -45,7 +47,7 @@ export default function ResultsPage({ params }: ResultsPageProps) {
 
     if (!resultsData || !questionsData || !responsesData) {
       // Redirect to quiz if no results found
-  router.push(`/quiz/${moduleId}`)
+      router.push(`/quiz/${moduleId}${courseId ? `?courseId=${courseId}` : ""}`)
       return
     }
 
@@ -55,19 +57,19 @@ export default function ResultsPage({ params }: ResultsPageProps) {
       setResponses(JSON.parse(responsesData))
     } catch (error) {
       console.error("Failed to parse quiz results:", error)
-      router.push(`/quiz/${moduleId}`)
+      router.push(`/quiz/${moduleId}${courseId ? `?courseId=${courseId}` : ""}`)
       return
     }
 
     setLoading(false)
-  }, [moduleId, router])
+  }, [moduleId, courseId, router])
 
   const retakeQuiz = () => {
     // Clear stored results
     sessionStorage.removeItem("quizResults")
     sessionStorage.removeItem("quizQuestions")
     sessionStorage.removeItem("quizResponses")
-  router.push(`/quiz/${moduleId}`)
+    router.push(`/quiz/${moduleId}${courseId ? `?courseId=${courseId}` : ""}`)
   }
 
   const createGitHubIssueUrl = (questionIndex: number, questionText: string) => {
@@ -126,7 +128,7 @@ Add any other context about the problem here.`)
               <p className="text-sm sm:text-base text-muted-foreground mt-1">Module {moduleId.toUpperCase()} Performance Summary</p>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-3">
-              <Link href="/" className="w-full sm:w-auto">
+              <Link href={courseId ? `/?courseId=${courseId}` : "/"} className="w-full sm:w-auto">
                 <Button variant="outline" className="flex items-center justify-center gap-2 bg-transparent w-full sm:w-auto">
                   <Home className="h-4 w-4" />
                   Home
@@ -250,7 +252,7 @@ Add any other context about the problem here.`)
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-            <Link href="/" className="w-full sm:w-auto">
+            <Link href={courseId ? `/?courseId=${courseId}` : "/"} className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="flex items-center justify-center gap-2 bg-transparent w-full sm:w-auto">
                 <Home className="h-5 w-5" />
                 Back to Home

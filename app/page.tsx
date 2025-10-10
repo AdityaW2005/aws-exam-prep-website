@@ -7,8 +7,11 @@ import { AppFooter } from "@/components/app-footer"
 import { ModulesList } from "@/components/modules-list"
 import Link from "next/link"
 import { ModulesPrefetch } from "@/components/modules-prefetch"
+import { CourseSelector } from "@/components/course-selector"
+import { COURSE_MAP, DEFAULT_COURSE_ID } from "@/lib/github"
 
-export default function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ courseId?: string }> }) {
+  const { courseId } = await searchParams
   return (
     <div className="min-h-screen bg-background">
       <ModulesPrefetch />
@@ -97,8 +100,9 @@ export default function HomePage() {
               </p>
             </div>
             
+            <CourseSelector />
             <Suspense fallback={<ModulesSkeleton />}>
-              <ModulesList />
+              <ModulesList courseId={courseId} />
             </Suspense>
           </div>
         </div>

@@ -6,13 +6,17 @@ import { BookOpen, Brain, Clock, AlertCircle, Github } from "lucide-react"
 import Link from "next/link"
 import { getModules } from "@/lib/api"
 import { serverGetModules } from "@/lib/server-api"
+import { COURSE_MAP, DEFAULT_COURSE_ID } from "@/lib/github"
+import { Suspense } from "react"
 import { RefreshButton, ErrorRefreshButton } from "@/components/refresh-buttons"
 import * as React from "react"
 
-export async function ModulesList() {
+export async function ModulesList({ courseId: courseIdProp }: { courseId?: string } = {}) {
   try {
+  // Determine courseId from prop or default
+  const courseId = courseIdProp && Object.values(COURSE_MAP).includes(courseIdProp) ? courseIdProp : DEFAULT_COURSE_ID
   // Prefer server-side fetch for initial render to ensure correct absolute URL on Vercel
-  const modules = await serverGetModules().catch(() => getModules())
+  const modules = await serverGetModules(courseId).catch(() => getModules(courseId))
 
     if (modules.length === 0) {
       return <EmptyModulesState />
@@ -21,7 +25,7 @@ export async function ModulesList() {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {modules.map((module) => (
-          <ModuleCard key={module.id} module={module} />
+          <ModuleCard key={module.id} module={module} courseId={courseId} />
         ))}
       </div>
     )
@@ -36,7 +40,8 @@ export async function ModulesList() {
 
 function ModuleCard({
   module,
-}: { module: { id: string; name: string; hasQuestions: boolean; hasFlashcards: boolean } }) {
+  courseId,
+}: { module: { id: string; name: string; hasQuestions: boolean; hasFlashcards: boolean }; courseId: string }) {
   return (
     <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
       <CardHeader className="pb-3">
@@ -64,7 +69,7 @@ function ModuleCard({
 
         <div className="space-y-2">
           {module.hasQuestions && (
-            <Link href={`/quiz/${module.id}`} className="block">
+            <Link href={`/quiz/${module.id}?courseId=${courseId}`} className="block">
               <Button className="w-full group/btn" variant="default">
                 <Brain className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
                 Take Quiz
@@ -72,7 +77,7 @@ function ModuleCard({
             </Link>
           )}
           {module.hasFlashcards && (
-            <Link href={`/flashcards/${module.id}`} className="block">
+            <Link href={`/flashcards/${module.id}?courseId=${courseId}`} className="block">
               <Button className="w-full group/btn bg-transparent" variant="outline">
                 <Clock className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
                 Review Flashcards
@@ -134,7 +139,9 @@ function ErrorModulesState() {
 function ModulesListCachedFallback() {
   if (typeof window === 'undefined') return null
   try {
-    const raw = localStorage.getItem('modules:list')
+    const courseId = new URLSearchParams(window.location.search).get('courseId') || DEFAULT_COURSE_ID
+    const key = `modules:list:${courseId}`
+    const raw = localStorage.getItem(key)
     if (!raw) return null
     const parsed = JSON.parse(raw) as { value: { id: string; name: string; hasQuestions: boolean; hasFlashcards: boolean }[]; ts: number }
     const modules = parsed?.value ?? []
@@ -144,7 +151,7 @@ function ModulesListCachedFallback() {
         <p className="text-sm text-muted-foreground mb-2">Showing cached modules (offline)</p>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => (
-            <ModuleCard key={m.id} module={m} />
+            <ModuleCard key={m.id} module={m} courseId={courseId} />
           ))}
         </div>
       </div>

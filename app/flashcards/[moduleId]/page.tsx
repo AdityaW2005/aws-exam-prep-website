@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -44,6 +44,8 @@ interface FlashcardState {
 export default function FlashcardsPage({ params }: FlashcardsPageProps) {
   const { moduleId } = React.use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const courseId = searchParams.get("courseId") || undefined
   const [state, setState] = useState<FlashcardState | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +54,7 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     async function loadFlashcards() {
       try {
         setLoading(true)
-  const response = await getFlashcards(moduleId)
+        const response = await getFlashcards(moduleId, courseId)
   const flashcards = response
 
         if (!flashcards || !Array.isArray(flashcards)) {
@@ -86,7 +88,7 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
     }
 
     loadFlashcards()
-  }, [moduleId])
+  }, [moduleId, courseId])
 
   // Keyboard navigation
   useEffect(() => {
@@ -264,7 +266,7 @@ export default function FlashcardsPage({ params }: FlashcardsPageProps) {
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Link href="/">
+              <Link href={courseId ? `/?courseId=${courseId}` : "/"}>
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3">
                   <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Home</span>

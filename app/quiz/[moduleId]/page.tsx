@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +21,8 @@ interface QuizPageProps {
 export default function QuizPage({ params }: QuizPageProps) {
   const { moduleId } = React.use(params)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const courseId = searchParams.get("courseId") || undefined
   const [quizState, setQuizState] = useState<QuizState | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +33,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     async function loadQuiz() {
       try {
         setLoading(true)
-  const questions = await getQuizQuestions(moduleId)
+        const questions = await getQuizQuestions(moduleId, courseId)
 
         if (!questions || !Array.isArray(questions) || questions.length === 0) {
           throw new Error("No questions found for this module")
@@ -59,7 +61,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
 
     loadQuiz()
-  }, [moduleId])
+  }, [moduleId, courseId])
 
   // Timer effect
   useEffect(() => {
@@ -187,7 +189,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     sessionStorage.setItem("quizQuestions", JSON.stringify(quizState.questions))
     sessionStorage.setItem("quizResponses", JSON.stringify(quizState.responses))
 
-  router.push(`/quiz/${moduleId}/results`)
+    router.push(`/quiz/${moduleId}/results${courseId ? `?courseId=${courseId}` : ""}`)
   }
 
   if (loading) {
@@ -219,7 +221,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-2 sm:gap-4">
-              <Link href="/">
+              <Link href={courseId ? `/?courseId=${courseId}` : "/"}>
                 <Button variant="ghost" size="sm" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3">
                   <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Home</span>

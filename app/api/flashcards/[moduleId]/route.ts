@@ -3,11 +3,13 @@ export const runtime = 'nodejs'
 import { fetchFlashcards } from "@/lib/github"
 import { parseFlashcards } from "@/lib/parsers"
 
-export async function GET(request: Request, { params }: { params: { moduleId: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ moduleId: string }> }) {
   try {
-    const { moduleId } = params
+    const { moduleId } = await params
+    const { searchParams } = new URL(request.url)
+    const courseId = searchParams.get('courseId') ?? undefined
 
-    const markdown = await fetchFlashcards(moduleId)
+    const markdown = await fetchFlashcards(moduleId, courseId)
     const parseResult = parseFlashcards(markdown)
     const flashcards = parseResult.data
 
@@ -20,7 +22,7 @@ export async function GET(request: Request, { params }: { params: { moduleId: st
       errors: parseResult.errors, // Include parsing errors for debugging
     })
   } catch (error) {
-    console.error(`Failed to fetch flashcards for module ${params.moduleId}:`, error)
+    console.error(`Failed to fetch flashcards data:`, error)
     return NextResponse.json({ error: "Failed to fetch flashcards data" }, { status: 500 })
   }
 }
