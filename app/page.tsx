@@ -27,15 +27,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed px-4 sm:px-0">
               A small student-made project for students to prep with quizzes and flashcards. No fluff—just study.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
+            <div className="flex items-center justify-center px-4 sm:px-0">
               <Link href="#modules">
-                <Button size="lg" className="rounded-full w-full sm:w-auto">
+                <Button size="lg" className="rounded-full">
                   Explore modules <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="#modules" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="rounded-full w-full sm:w-auto">
-                  View modules
                 </Button>
               </Link>
             </div>
